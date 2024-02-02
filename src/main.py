@@ -1,7 +1,7 @@
 import argparse
 from compileError import CompileError
 from parser import parse_plus
-from token import tokenize
+from tokenizer import tokenize
 
 parser = argparse.ArgumentParser("pythonpp")
 parser.add_argument("filename")
