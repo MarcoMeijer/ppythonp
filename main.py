@@ -38,7 +38,7 @@ def tokenize(input: str) -> list[Token]:
     lines = input.split("\n")
     result = []
     for line in range(len(lines)):
-        result.extend([Token(x, line) for x in lines[line].split(" ")])
+        result.extend([Token(x, line) for x in lines[line].split(" ") if x != ""])
     return result
 
 def parse_token(token):
@@ -51,6 +51,8 @@ def parse_token(token):
     return parser
 
 def parse_int(input: list[Token]) -> tuple[Node, list[Token]] | CompileError:
+    if input == []:
+        return CompileError(None, "Unexpected end of file")
     if input[0].value.isdigit():
         return Literal(int(input[0].value)), input[1:]
     return CompileError(input[0].line, "Expected integer")
