@@ -14,4 +14,4 @@ result = parse_plus(tokenize(source))
 if isinstance(result, CompileError):
     result.display(source.split("\n"))
 if isinstance(result, tuple):
-    print(result[0])
+    print(result[0].execute())
