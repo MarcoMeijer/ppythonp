@@ -24,13 +24,14 @@ class Add(Node):
         return str(self.lhs) + "+" + str(self.rhs)
 
 class CompileError:
-    def __init__(self, line, message) -> None:
+    def __init__(self, line: int | None, message: str) -> None:
         self.line = line
         self.message = message
 
     def display(self, lines: list[str]) -> None:
-        print(f"Compile error on line {self.line}:")
-        print(" --> " + lines[self.line])
+        if self.line != None:
+            print(f"Compile error on line {self.line}:")
+            print(" --> " + lines[self.line])
         print(self.message)
 
 def tokenize(input: str) -> list[Token]:
@@ -42,6 +43,8 @@ def tokenize(input: str) -> list[Token]:
 
 def parse_token(token):
     def parser(input: list[Token]) -> tuple[str, list[Token]] | CompileError:
+        if input == []:
+            return CompileError(None, "Unexpected end of file")
         if input[0].value == token:
             return input[0].value, input[1:]
         return CompileError(input[0].line, "Expected +")
@@ -57,9 +60,6 @@ def parse_plus(input: list[Token]) -> tuple[Node, list[Token]] | CompileError:
     if isinstance(result, CompileError):
         return result
     lhs, input = result
-
-    if input == []:
-        return lhs, input
 
     result = parse_token("+")(input)
     if isinstance(result, CompileError):
