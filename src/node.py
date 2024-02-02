@@ -15,14 +15,22 @@ class Literal(Node):
     def execute(self) -> Any:
         return self.value
 
-class Add(Node):
-    def __init__(self, lhs: Node, rhs: Node) -> None:
+class BinOp(Node):
+    def __init__(self, lhs: Node, op: str, rhs: Node) -> None:
         self.lhs = lhs
+        self.op = op
         self.rhs = rhs
 
     def __str__(self) -> str:
-        return str(self.lhs) + "+" + str(self.rhs)
+        return str(self.lhs) + self.op + str(self.rhs)
 
     def execute(self) -> Any:
-        return self.lhs.execute() + self.rhs.execute()
+        if self.op == "+":
+            return self.lhs.execute() + self.rhs.execute()
+        if self.op == "-":
+            return self.lhs.execute() - self.rhs.execute()
+        if self.op == "*":
+            return self.lhs.execute() * self.rhs.execute()
+        if self.op == "/":
+            return self.lhs.execute() / self.rhs.execute()
 

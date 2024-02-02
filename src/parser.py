@@ -1,5 +1,5 @@
 from compileError import CompileError
-from node import Add, Node, Literal
+from node import BinOp, Node, Literal
 from typing import Callable, List
 from tokenizer import Token
 
@@ -69,12 +69,22 @@ def parse_int(input: list[Token]) -> tuple[Node, list[Token]] | CompileError:
         return Literal(int(input[0].value)), input[1:]
     return CompileError(input[0].line, "Expected integer")
 
+def parse_product(input: list[Token]) -> tuple[Node, list[Token]] | CompileError:
+    return alt(
+        map_parser(
+            separated_pair(parse_int, parse_token("*"), parse_product),
+            lambda x : BinOp(x[0], "*", x[1])
+        ),
+        parse_int
+    )(input)
+
+
 def parse_plus(input: list[Token]) -> tuple[Node, list[Token]] | CompileError:
     return alt(
         map_parser(
-            separated_pair(parse_int, parse_token("+"), parse_plus),
-            lambda x : Add(x[0], x[1])
+            separated_pair(parse_product, parse_token("+"), parse_plus),
+            lambda x : BinOp(x[0], "+", x[1])
         ),
-        parse_int
+        parse_product
     )(input)
 
