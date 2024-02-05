@@ -16,4 +16,4 @@ if isinstance(result, CompileError):
     result.display(source.split("\n"))
 if isinstance(result, tuple):
     context = Context()
-    print(result[0].execute(context))
+    result[0].execute(context)

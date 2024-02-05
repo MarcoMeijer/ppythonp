@@ -60,3 +60,22 @@ class Assign(Node):
         else:
             print("RUNTIME ERROR: Trying to assign to a non variable")
             exit(-1)
+
+class FunctionCall(Node):
+    def __init__(self, function: Node, arguments: list[Node]) -> None:
+        self.function = function
+        self.arguments = arguments
+
+    def __str__(self) -> str:
+        result = str(self.function) + "("
+        first = True
+        for arg in self.arguments:
+            if first:
+                result += ", "
+                first = False
+            result += str(arg)
+        return result + ")"
+
+    def execute(self, context: Context) -> Any:
+        print(self.arguments[0].execute(context))
+

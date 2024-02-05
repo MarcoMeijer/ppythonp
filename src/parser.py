@@ -1,5 +1,5 @@
 from compileError import CompileError
-from node import Assign, BinOp, Identifier, Node, Literal
+from node import Assign, BinOp, FunctionCall, Identifier, Node, Literal
 from typing import Any, Callable, List, Type
 from tokenizer import Token
 
@@ -34,6 +34,21 @@ def preceded[T1, T2](p1: Parser[T1], p2: Parser[T2]) -> Parser[T2]:
         return p2(input)
     return parser
 
+def pair[T1, T2](p1: Parser[T1], p2: Parser[T2]) -> Parser[tuple[T1, T2]]:
+    def parser(input: list[Token]) -> Result[tuple[T1, T2]]:
+        result = p1(input)
+        if isinstance(result, CompileError):
+            return result
+        a, input = result
+
+        result = p2(input)
+        if isinstance(result, CompileError):
+            return result
+        b, input = result
+
+        return ((a, b), input)
+    return parser
+
 def separated_pair[T1, T2, T3](p1: Parser[T1], p2: Parser[T2], p3: Parser[T3]) -> Parser[tuple[T1, T3]]:
     def parser(input: list[Token]) -> Result[tuple[T1, T3]]:
         result = p1(input)
@@ -51,6 +66,25 @@ def separated_pair[T1, T2, T3](p1: Parser[T1], p2: Parser[T2], p3: Parser[T3]) -
             return result
         b, input = result
         return ((a, b), input)
+    return parser
+
+def delimited[T1, T2, T3](p1: Parser[T1], p2: Parser[T2], p3: Parser[T3]) -> Parser[T2]:
+    def parser(input: list[Token]) -> Result[T2]:
+        result = p1(input)
+        if isinstance(result, CompileError):
+            return result
+        input = result[1]
+
+        result = p2(input)
+        if isinstance(result, CompileError):
+            return result
+        x, input = result
+
+        result = p3(input)
+        if isinstance(result, CompileError):
+            return result
+        input = result[1]
+        return x, input
     return parser
 
 def alt[T](*args: Parser[T]) -> Parser[T]:
@@ -85,12 +119,21 @@ def map_parser[T, U](p: Parser[T], f: Callable[[T], U]) -> Parser[U]:
         return f(x), input
     return parser
 
-def parse_int(input: list[Token]) -> Result[Node]:
-    if input == []:
-        return CompileError(None, "Unexpected end of file")
-    if input[0].value.isdigit():
-        return Literal(int(input[0].value)), input[1:]
-    return CompileError(input[0].line, "Expected integer")
+def separated_list_0[T, U](p: Parser[T], separator: Parser[U]) -> Parser[list[T]]:
+    def parser(input: list[Token]) -> Result[list[T]]:
+        items = []
+        while True:
+            result = p(input)
+            if isinstance(result, CompileError):
+                return items, input
+            x, input = result
+            items.append(x)
+
+            result = separator(input)
+            if isinstance(result, CompileError):
+                return items, input
+            input = result[1]
+    return parser
 
 def left_ass_expr(tokens: list[str], p: Parser[Node]) -> Parser[Node]:
     def parser(input: list[Token]) -> Result[Node]:
@@ -113,9 +156,33 @@ def left_ass_expr(tokens: list[str], p: Parser[Node]) -> Parser[Node]:
 
     return parser
 
-def parse_product(input: list[Token]) -> Result[Node]:
-    return left_ass_expr(["*", "/"], parse_int)(input)
+def parse_int(input: list[Token]) -> Result[Node]:
+    if input == []:
+        return CompileError(None, "Unexpected end of file")
+    if input[0].value.isdigit():
+        return Literal(int(input[0].value)), input[1:]
+    return CompileError(input[0].line, "Expected integer")
 
+def parse_identifier(input: list[Token]) -> Result[Node]:
+    if input == []:
+        return CompileError(None, "Unexpected end of file")
+    if is_identifier(input[0].value):
+        return Identifier(input[0].value), input[1:]
+    return CompileError(input[0].line, "Expected identifier")
+
+def parse_function_call(input: List[Token]) -> Result[Node]:
+    return map_parser(
+        pair(parse_identifier,
+             delimited(parse_token("("), separated_list_0(parse_expr, parse_token(",")), parse_token(")"))
+        ),
+        lambda x : FunctionCall(x[0], x[1])
+    )(input)
+
+def parse_value(input: List[Token]) -> Result[Node]:
+    return alt(parse_function_call, parse_int)(input)
+
+def parse_product(input: list[Token]) -> Result[Node]:
+    return left_ass_expr(["*", "/"], parse_value)(input)
 
 def parse_plus(input: list[Token]) -> Result[Node]:
     return left_ass_expr(["+", "-"], parse_product)(input)
@@ -125,13 +192,6 @@ def parse_expr(input: list[Token]) -> Result[Node]:
 
 def is_identifier(name: str) -> bool:
     return name[0].isalpha() or name[0] == "_"
-
-def parse_identifier(input: list[Token]) -> Result[Node]:
-    if input == []:
-        return CompileError(None, "Unexpected end of file")
-    if is_identifier(input[0].value):
-        return Identifier(input[0].value), input[1:]
-    return CompileError(input[0].line, "Expected identifier")
 
 def parse_assignment(input: list[Token]) -> Result[Node]:
     return map_parser(
