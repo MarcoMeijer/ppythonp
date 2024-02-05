@@ -295,6 +295,6 @@ def parse_code_block(spaces: int) -> Parser[CodeBlock]:
     def parser(input: list[Token]):
         return map_parser(
             many_0(parse_line(spaces)),
-            lambda x : CodeBlock(x)
+            lambda x : CodeBlock(x, spaces)
         )(input)
     return parser

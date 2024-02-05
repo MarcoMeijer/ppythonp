@@ -97,11 +97,12 @@ class FunctionCall(Node):
             return context.call_function(self.function, list(map(lambda x : x.execute(context), self.arguments)))
 
 class CodeBlock(Node):
-    def __init__(self, lines: list[Node]) -> None:
+    def __init__(self, lines: list[Node], indent: int) -> None:
         self.lines = lines
+        self.indent = indent
 
     def __str__(self) -> str:
-        return "\n".join(map(str, self.lines))
+        return "\n".join(map(lambda x : " " * self.indent + str(x), self.lines))
 
     def execute(self, context: Context) -> Any:
         for line in self.lines:
