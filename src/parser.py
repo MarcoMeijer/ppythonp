@@ -213,7 +213,7 @@ def parse_value(input: List[Token]) -> Result[Node]:
     return alt(parse_true, parse_false, parse_function_call, parse_identifier, parse_int)(input)
 
 def parse_product(input: list[Token]) -> Result[Node]:
-    return left_ass_expr(["*", "/"], parse_value)(input)
+    return left_ass_expr(["*", "/", "%"], parse_value)(input)
 
 def parse_plus(input: list[Token]) -> Result[Node]:
     return left_ass_expr(["+", "-"], parse_product)(input)
