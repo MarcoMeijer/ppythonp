@@ -26,14 +26,21 @@ def tokenize(input: str) -> list[Token]:
         while i + 1 < n:
             i = i + 1
             c = lines[line][i]
-            if chars != [] and chars[0].isdigit():
-                if c.isdigit():
+            if chars != []:
+                if chars[0].isdigit():
+                    if c.isdigit():
+                        chars.append(c)
+                        continue
+                elif chars[0] == "\"":
                     chars.append(c)
+                    if c == "\"":
+                        result.append(Token("".join(chars), line))
+                        chars = []
                     continue
-            else:
-                if c.isdigit() or c.isalpha() or c == "_":
-                    chars.append(c)
-                    continue
+                else:
+                    if c.isdigit() or c.isalpha() or c == "_":
+                        chars.append(c)
+                        continue
 
             if chars != []:
                 result.append(Token("".join(chars), line))
@@ -42,7 +49,7 @@ def tokenize(input: str) -> list[Token]:
             if c.isspace():
                 continue
 
-            if c.isalpha() or c.isdigit() or c == "_" :
+            if c.isalpha() or c.isdigit() or c == "_" or c == "\"":
                 chars.append(c)
                 continue
 

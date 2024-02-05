@@ -188,6 +188,13 @@ def parse_int(input: list[Token]) -> Result[Node]:
         return Literal(int(input[0].value)), input[1:]
     return CompileError(input[0].line, "Expected integer")
 
+def parse_string(input: list[Token]) -> Result[Node]:
+    if input == []:
+        return CompileError(None, "Unexpected end of file")
+    if input[0].value[0] == "\"":
+        return Literal(input[0].value[1:-1]), input[1:]
+    return CompileError(input[0].line, "Expected string")
+
 def parse_false(input: List[Token]) -> Result[Node]:
     return map_parser(parse_token("FaLsE"), lambda _ : Literal(False))(input)
 
@@ -210,7 +217,7 @@ def parse_function_call(input: List[Token]) -> Result[Node]:
     )(input)
 
 def parse_value(input: List[Token]) -> Result[Node]:
-    return alt(parse_true, parse_false, parse_function_call, parse_identifier, parse_int)(input)
+    return alt(parse_true, parse_false, parse_string, parse_function_call, parse_identifier, parse_int)(input)
 
 def parse_product(input: list[Token]) -> Result[Node]:
     return left_ass_expr(["*", "/", "%"], parse_value)(input)
