@@ -102,3 +102,15 @@ class IfStatement(Node):
         if self.condition.execute(context):
             self.if_true.execute(context)
 
+class WhileLoop(Node):
+    def __init__(self, condition: Node, while_true: CodeBlock) -> None:
+        self.condition = condition
+        self.while_true = while_true
+
+    def __str__(self) -> str:
+        return "while " + str(self.condition) + ":\n" + str(self.while_true)
+
+    def execute(self, context: Context) -> Any:
+        while self.condition.execute(context):
+            self.while_true.execute(context)
+
