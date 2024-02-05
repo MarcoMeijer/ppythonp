@@ -21,7 +21,7 @@ def parse_token(token):
             return CompileError(None, "Unexpected end of file")
         if input[0].value == token:
             return input[0].value, input[1:]
-        return CompileError(input[0].line, "Expected +")
+        return CompileError(input[0].line, f"Expected {token}")
     return parser
 
 def preceded[T1, T2](p1: Parser[T1], p2: Parser[T2]) -> Parser[T2]:
@@ -218,8 +218,11 @@ def parse_product(input: list[Token]) -> Result[Node]:
 def parse_plus(input: list[Token]) -> Result[Node]:
     return left_ass_expr(["+", "-"], parse_product)(input)
 
+def parse_comparison(input: list[Token]) -> Result[Node]:
+    return left_ass_expr(["==", "!=", "<", ">", "<=", ">="], parse_plus)(input)
+
 def parse_expr(input: list[Token]) -> Result[Node]:
-    return parse_plus(input)
+    return parse_comparison(input)
 
 def is_identifier(name: str) -> bool:
     return name[0].isalpha() or name[0] == "_"

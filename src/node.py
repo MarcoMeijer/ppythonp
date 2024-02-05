@@ -45,6 +45,18 @@ class BinOp(Node):
             return self.lhs.execute(context) * self.rhs.execute(context)
         if self.op == "/":
             return self.lhs.execute(context) / self.rhs.execute(context)
+        if self.op == "==":
+            return self.lhs.execute(context) == self.rhs.execute(context)
+        if self.op == "!=":
+            return self.lhs.execute(context) != self.rhs.execute(context)
+        if self.op == "<":
+            return self.lhs.execute(context) < self.rhs.execute(context)
+        if self.op == ">":
+            return self.lhs.execute(context) > self.rhs.execute(context)
+        if self.op == "<=":
+            return self.lhs.execute(context) <= self.rhs.execute(context)
+        if self.op == ">=":
+            return self.lhs.execute(context) >= self.rhs.execute(context)
 
 class Assign(Node):
     def __init__(self, lhs: Node, rhs: Node) -> None:

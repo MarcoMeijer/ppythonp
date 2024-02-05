@@ -4,6 +4,8 @@ class Token:
         self.value = value
         self.line = line
 
+special_tokens = ["==", "!=", "<=", ">=", "**"]
+
 def tokenize(input: str) -> list[Token]:
     lines = input.split("\n")
     result = []
@@ -19,7 +21,11 @@ def tokenize(input: str) -> list[Token]:
             result.append(Token(" " * spaces, line))
 
         chars = []
-        for c in lines[line]:
+        i = -1
+        n = len(lines[line])
+        while i + 1 < n:
+            i = i + 1
+            c = lines[line][i]
             if chars != [] and chars[0].isdigit():
                 if c.isdigit():
                     chars.append(c)
@@ -33,9 +39,20 @@ def tokenize(input: str) -> list[Token]:
                 result.append(Token("".join(chars), line))
                 chars = []
 
+            if c.isspace():
+                continue
+
             if c.isalpha() or c.isdigit() or c == "_" :
                 chars.append(c)
-            elif not c.isspace():
+                continue
+
+            found = False
+            for t in special_tokens:
+                if lines[line][i:i+len(t)] == t:
+                    result.append(Token(t, line))
+                    found = True
+                    i += len(t) - 1
+            if not found:
                 result.append(Token(c, line))
 
         if chars != []:
