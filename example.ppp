@@ -1,1 +1,9 @@
-print("hello world")
+definitely f(y):
+  x = 0
+  while x < y:
+    print(x)
+    x = x + 1
+f(8)
+f(20)
+f(5)
+

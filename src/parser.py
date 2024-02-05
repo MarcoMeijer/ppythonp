@@ -1,5 +1,5 @@
 from compileError import CompileError
-from node import Assign, BinOp, CodeBlock, FunctionCall, Identifier, IfStatement, Node, Literal, WhileLoop
+from node import Assign, BinOp, CodeBlock, FunctionCall, FunctionDefinition, Identifier, IfStatement, Node, Literal, WhileLoop
 from typing import Callable, List
 from tokenizer import Token
 
@@ -201,7 +201,7 @@ def parse_false(input: List[Token]) -> Result[Node]:
 def parse_true(input: List[Token]) -> Result[Node]:
     return map_parser(parse_token("tRuE"), lambda _ : Literal(True))(input)
 
-def parse_identifier(input: list[Token]) -> Result[Node]:
+def parse_identifier(input: list[Token]) -> Result[Identifier]:
     if input == []:
         return CompileError(None, "Unexpected end of file")
     if is_identifier(input[0].value):
@@ -213,7 +213,7 @@ def parse_function_call(input: List[Token]) -> Result[Node]:
         pair(parse_identifier,
              delimited(parse_token("("), separated_list_0(parse_expr, parse_token(",")), parse_token(")"))
         ),
-        lambda x : FunctionCall(x[0], x[1])
+        lambda x : FunctionCall(x[0].name, x[1])
     )(input)
 
 def parse_value(input: List[Token]) -> Result[Node]:
@@ -262,11 +262,23 @@ def parse_while(spaces: int) -> Parser[Node]:
         )(input)
     return parser
 
+def parse_definitely(spaces: int) -> Parser[Node]:
+    def parser(input: list[Token]):
+        return map_parser(
+            parse_tuple(
+                preceded(parse_token("definitely"), parse_identifier),
+                terminated(delimited(parse_token("("), separated_list_0(parse_identifier, parse_token(",")), parse_token(")")), parse_token(":")),
+                preceded(parse_token("\n"), parse_code_block(spaces + 2))
+            ),
+            lambda x : FunctionDefinition(x[0].name, list(map(lambda y : y.name, x[1])), x[2])
+        )(input)
+    return parser
+
 def parse_line(spaces: int) -> Parser[Node]:
     def parser(input: list[Token]):
         p = alt(
             terminated(alt(parse_assignment, parse_expr), parse_token("\n")),
-            parse_if(spaces), parse_while(spaces)
+            parse_if(spaces), parse_while(spaces), parse_definitely(spaces),
         )
         if spaces == 0:
             return p(input)

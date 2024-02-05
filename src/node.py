@@ -76,7 +76,7 @@ class Assign(Node):
             exit(-1)
 
 class FunctionCall(Node):
-    def __init__(self, function: Node, arguments: list[Node]) -> None:
+    def __init__(self, function: str, arguments: list[Node]) -> None:
         self.function = function
         self.arguments = arguments
 
@@ -91,7 +91,10 @@ class FunctionCall(Node):
         return result + ")"
 
     def execute(self, context: Context) -> Any:
-        print(self.arguments[0].execute(context))
+        if self.function == "print":
+            print(self.arguments[0].execute(context))
+        else:
+            context.call_function(self.function, list(map(lambda x : x.execute(context), self.arguments)))
 
 class CodeBlock(Node):
     def __init__(self, lines: list[Node]) -> None:
@@ -127,4 +130,22 @@ class WhileLoop(Node):
     def execute(self, context: Context) -> Any:
         while self.condition.execute(context):
             self.while_true.execute(context)
+
+class FunctionDefinition(Node):
+    def __init__(self, name: str, arguments: list[str], code: CodeBlock) -> None:
+        self.name = name
+        self.arguments = arguments
+        self.code = code
+
+    def __str__(self) -> str:
+        return "definitely " + str(self.name) + "(" + ", ".join(list(map(str, self.arguments))) + "):\n" + str(self.code)
+
+    def execute(self, context: Context) -> Any:
+        def f(*args):
+            if len(args) != len(self.arguments):
+                print(f"Incorrect number of arguments passed to function {self.name}")
+            for i in range(len(self.arguments)):
+                context.set_variable(self.arguments[i], args[i])
+            return self.code.execute(context)
+        context.set_function(self.name, f)
 
