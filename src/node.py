@@ -94,7 +94,7 @@ class FunctionCall(Node):
         if self.function == "print":
             print(self.arguments[0].execute(context))
         else:
-            context.call_function(self.function, list(map(lambda x : x.execute(context), self.arguments)))
+            return context.call_function(self.function, list(map(lambda x : x.execute(context), self.arguments)))
 
 class CodeBlock(Node):
     def __init__(self, lines: list[Node]) -> None:
@@ -106,6 +106,8 @@ class CodeBlock(Node):
     def execute(self, context: Context) -> Any:
         for line in self.lines:
             line.execute(context)
+            if context.returning:
+                return
 
 class IfStatement(Node):
     def __init__(self, condition: Node, if_true: CodeBlock) -> None:
@@ -144,8 +146,24 @@ class FunctionDefinition(Node):
         def f(*args):
             if len(args) != len(self.arguments):
                 print(f"Incorrect number of arguments passed to function {self.name}")
+            context.add_scope()
             for i in range(len(self.arguments)):
                 context.set_variable(self.arguments[i], args[i])
-            return self.code.execute(context)
+            self.code.execute(context)
+            ret = context.return_value
+            context.return_value = None
+            context.returning = False
+            context.pop_scope()
+            return ret
         context.set_function(self.name, f)
 
+class Return(Node):
+    def __init__(self, expr: Node) -> None:
+        self.expr = expr
+
+    def __str__(self) -> str:
+        return "return " + str(self.expr)
+
+    def execute(self, context: Context) -> Any:
+        context.return_value = self.expr.execute(context)
+        context.returning = True

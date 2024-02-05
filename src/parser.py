@@ -1,5 +1,5 @@
 from compileError import CompileError
-from node import Assign, BinOp, CodeBlock, FunctionCall, FunctionDefinition, Identifier, IfStatement, Node, Literal, WhileLoop
+from node import Assign, BinOp, CodeBlock, FunctionCall, FunctionDefinition, Identifier, IfStatement, Node, Literal, Return, WhileLoop
 from typing import Callable, List
 from tokenizer import Token
 
@@ -274,10 +274,16 @@ def parse_definitely(spaces: int) -> Parser[Node]:
         )(input)
     return parser
 
+def parse_return(input: list[Token]) -> Result[Node]:
+    return map_parser(
+        preceded(parse_token("return"), parse_expr),
+        lambda x : Return(x)
+    )(input)
+
 def parse_line(spaces: int) -> Parser[Node]:
     def parser(input: list[Token]):
         p = alt(
-            terminated(alt(parse_assignment, parse_expr), parse_token("\n")),
+            terminated(alt(parse_assignment, parse_return, parse_expr), parse_token("\n")),
             parse_if(spaces), parse_while(spaces), parse_definitely(spaces),
         )
         if spaces == 0:

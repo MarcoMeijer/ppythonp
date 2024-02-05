@@ -1,9 +1,8 @@
-definitely f(y):
-  x = 0
-  while x < y:
-    print(x)
-    x = x + 1
-f(8)
-f(20)
-f(5)
-
+definitely fib(x):
+  if x <= 1:
+    return x
+  return fib(x - 1) + fib(x - 2)
+x = 0
+while x < 15:
+  print(fib(x))
+  x = x + 1
