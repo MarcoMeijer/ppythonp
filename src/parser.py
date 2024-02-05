@@ -1,5 +1,5 @@
 from compileError import CompileError
-from node import Assign, BinOp, CodeBlock, FunctionCall, Identifier, Node, Literal
+from node import Assign, BinOp, CodeBlock, FunctionCall, Identifier, IfStatement, Node, Literal
 from typing import Callable, List
 from tokenizer import Token
 
@@ -32,6 +32,20 @@ def preceded[T1, T2](p1: Parser[T1], p2: Parser[T2]) -> Parser[T2]:
         input = result[1]
 
         return p2(input)
+    return parser
+
+def terminated[T1, T2](p1: Parser[T1], p2: Parser[T2]) -> Parser[T1]:
+    def parser(input: list[Token]) -> Result[T1]:
+        result = p1(input)
+        if isinstance(result, CompileError):
+            return result
+        x, input = result
+
+        result = p2(input)
+        if isinstance(result, CompileError):
+            return result
+        input = result[1]
+        return x, input
     return parser
 
 def pair[T1, T2](p1: Parser[T1], p2: Parser[T2]) -> Parser[tuple[T1, T2]]:
@@ -135,6 +149,17 @@ def separated_list_0[T, U](p: Parser[T], separator: Parser[U]) -> Parser[list[T]
             input = result[1]
     return parser
 
+def many_0[T](p: Parser[T]) -> Parser[list[T]]:
+    def parser(input: list[Token]) -> Result[list[T]]:
+        items = []
+        while True:
+            result = p(input)
+            if isinstance(result, CompileError):
+                return items, input
+            x, input = result
+            items.append(x)
+    return parser
+
 def left_ass_expr(tokens: list[str], p: Parser[Node]) -> Parser[Node]:
     def parser(input: list[Token]) -> Result[Node]:
         result = p(input)
@@ -205,11 +230,30 @@ def parse_assignment(input: list[Token]) -> Result[Node]:
         lambda x : Assign(x[0], x[1])
     )(input)
 
-def parse_line(input: list[Token]) -> Result[Node]:
-    return alt(parse_assignment, parse_expr)(input)
+def parse_if(spaces: int) -> Parser[Node]:
+    def parser(input: list[Token]):
+        return map_parser(
+            pair(
+                delimited(parse_token("if"), parse_expr, parse_token(":")),
+                preceded(parse_token("\n"), parse_code_block(spaces + 2))
+            ),
+            lambda x : IfStatement(x[0], x[1])
+        )(input)
+    return parser
 
-def parse_code_block(input: list[Token]) -> Result[Node]:
-    return map_parser(
-        separated_list_0(parse_line, parse_token("\n")),
-        lambda x : CodeBlock(x)
-    )(input)
+
+def parse_line(spaces: int) -> Parser[Node]:
+    def parser(input: list[Token]):
+        p = alt(terminated(alt(parse_assignment, parse_expr), parse_token("\n")), parse_if(spaces))
+        if spaces == 0:
+            return p(input)
+        return preceded(parse_token(" " * spaces), p)(input)
+    return parser
+
+def parse_code_block(spaces: int) -> Parser[CodeBlock]:
+    def parser(input: list[Token]):
+        return map_parser(
+            many_0(parse_line(spaces)),
+            lambda x : CodeBlock(x)
+        )(input)
+    return parser

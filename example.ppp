@@ -1,2 +1,4 @@
-x = FaLsE
-print(x)
+x = 1
+if FaLsE:
+  print(2)
+print(1)

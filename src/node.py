@@ -70,24 +70,35 @@ class FunctionCall(Node):
         result = str(self.function) + "("
         first = True
         for arg in self.arguments:
-            if first:
+            if not first:
                 result += ", "
-                first = False
             result += str(arg)
+            first = False
         return result + ")"
 
     def execute(self, context: Context) -> Any:
         print(self.arguments[0].execute(context))
-
 
 class CodeBlock(Node):
     def __init__(self, lines: list[Node]) -> None:
         self.lines = lines
 
     def __str__(self) -> str:
-        return "\n".join(map(str,self.lines))
+        return "\n".join(map(str, self.lines))
 
     def execute(self, context: Context) -> Any:
         for line in self.lines:
             line.execute(context)
+
+class IfStatement(Node):
+    def __init__(self, condition: Node, if_true: CodeBlock) -> None:
+        self.condition = condition
+        self.if_true = if_true
+
+    def __str__(self) -> str:
+        return "if " + str(self.condition) + ":\n" + str(self.if_true)
+
+    def execute(self, context: Context) -> Any:
+        if self.condition.execute(context):
+            self.if_true.execute(context)
 

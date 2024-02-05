@@ -8,6 +8,16 @@ def tokenize(input: str) -> list[Token]:
     lines = input.split("\n")
     result = []
     for line in range(len(lines)):
+        # whitespace
+        spaces = 0
+        for c in lines[line]:
+            if c == " ":
+                spaces += 1
+            else:
+                break
+        if spaces != 0:
+            result.append(Token(" " * spaces, line))
+
         chars = []
         for c in lines[line]:
             if chars != [] and chars[0].isdigit():
