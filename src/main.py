@@ -10,7 +10,8 @@ args = parser.parse_args()
 
 file = open(args.filename, 'r')
 source = file.read()
-result = parse_code_block(tokenize(source))
+tokens = tokenize(source)
+result = parse_code_block(tokens)
 
 if isinstance(result, CompileError):
     result.display(source.split("\n"))

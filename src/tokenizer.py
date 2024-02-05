@@ -8,7 +8,30 @@ def tokenize(input: str) -> list[Token]:
     lines = input.split("\n")
     result = []
     for line in range(len(lines)):
-        result.extend([Token(x, line) for x in lines[line].split(" ") if x != ""])
+        chars = []
+        for c in lines[line]:
+            if chars != [] and chars[0].isdigit():
+                if c.isdigit():
+                    chars.append(c)
+                    continue
+            else:
+                if c.isdigit() or c.isalpha() or c == "_":
+                    chars.append(c)
+                    continue
+
+            if chars != []:
+                result.append(Token("".join(chars), line))
+                chars = []
+
+            if c.isalpha() or c.isdigit() or c == "_" :
+                chars.append(c)
+            elif not c.isspace():
+                result.append(Token(c, line))
+
+        if chars != []:
+            result.append(Token("".join(chars), line))
+            chars = []
+
         result.append(Token("\n", line))
     return result
 
