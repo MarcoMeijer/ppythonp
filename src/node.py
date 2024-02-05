@@ -79,3 +79,15 @@ class FunctionCall(Node):
     def execute(self, context: Context) -> Any:
         print(self.arguments[0].execute(context))
 
+
+class CodeBlock(Node):
+    def __init__(self, lines: list[Node]) -> None:
+        self.lines = lines
+
+    def __str__(self) -> str:
+        return "\n".join(map(str,self.lines))
+
+    def execute(self, context: Context) -> Any:
+        for line in self.lines:
+            line.execute(context)
+

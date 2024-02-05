@@ -9,5 +9,6 @@ def tokenize(input: str) -> list[Token]:
     result = []
     for line in range(len(lines)):
         result.extend([Token(x, line) for x in lines[line].split(" ") if x != ""])
+        result.append(Token("\n", line))
     return result
 

@@ -1,6 +1,6 @@
 from compileError import CompileError
-from node import Assign, BinOp, FunctionCall, Identifier, Node, Literal
-from typing import Any, Callable, List, Type
+from node import Assign, BinOp, CodeBlock, FunctionCall, Identifier, Node, Literal
+from typing import Callable, List
 from tokenizer import Token
 
 type Result[T] = tuple[T, List[Token]] | CompileError
@@ -202,3 +202,8 @@ def parse_assignment(input: list[Token]) -> Result[Node]:
 def parse_line(input: list[Token]) -> Result[Node]:
     return alt(parse_assignment, parse_expr)(input)
 
+def parse_code_block(input: list[Token]) -> Result[Node]:
+    return map_parser(
+        separated_list_0(parse_line, parse_token("\n")),
+        lambda x : CodeBlock(x)
+    )(input)

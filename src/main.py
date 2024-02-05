@@ -1,7 +1,7 @@
 import argparse
 from compileError import CompileError
 from context import Context
-from parser import parse_line
+from parser import parse_code_block
 from tokenizer import tokenize
 
 parser = argparse.ArgumentParser("pythonpp")
@@ -10,7 +10,7 @@ args = parser.parse_args()
 
 file = open(args.filename, 'r')
 source = file.read()
-result = parse_line(tokenize(source))
+result = parse_code_block(tokenize(source))
 
 if isinstance(result, CompileError):
     result.display(source.split("\n"))
