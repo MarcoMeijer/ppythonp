@@ -45,10 +45,18 @@ class BinOp(Node):
             return self.lhs.execute(context) * self.rhs.execute(context)
         if self.op == "/":
             return self.lhs.execute(context) / self.rhs.execute(context)
-        if self.op == "=":
-            if isinstance(self.lhs, Identifier):
-                context.set_variable(self.lhs.name, self.rhs.execute(context))
-            else:
-                print("RUNTIME ERROR: Trying to assign to a non variable")
-                exit(-1)
 
+class Assign(Node):
+    def __init__(self, lhs: Node, rhs: Node) -> None:
+        self.lhs = lhs
+        self.rhs = rhs
+
+    def __str__(self) -> str:
+        return str(self.lhs) + "=" + str(self.rhs)
+
+    def execute(self, context: Context) -> Any:
+        if isinstance(self.lhs, Identifier):
+            context.set_variable(self.lhs.name, self.rhs.execute(context))
+        else:
+            print("RUNTIME ERROR: Trying to assign to a non variable")
+            exit(-1)

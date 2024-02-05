@@ -1,5 +1,5 @@
 from compileError import CompileError
-from node import BinOp, Identifier, Node, Literal
+from node import Assign, BinOp, Identifier, Node, Literal
 from typing import Any, Callable, List, Type
 from tokenizer import Token
 
@@ -136,7 +136,7 @@ def parse_identifier(input: list[Token]) -> Result[Node]:
 def parse_assignment(input: list[Token]) -> Result[Node]:
     return map_parser(
         separated_pair(parse_identifier, parse_token("="), parse_expr),
-        lambda x : BinOp(x[0], "=", x[1])
+        lambda x : Assign(x[0], x[1])
     )(input)
 
 def parse_line(input: list[Token]) -> Result[Node]:
