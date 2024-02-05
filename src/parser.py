@@ -1,5 +1,5 @@
 from compileError import CompileError
-from node import BinOp, Node, Literal
+from node import BinOp, Identifier, Node, Literal
 from typing import Any, Callable, List, Type
 from tokenizer import Token
 
@@ -117,6 +117,28 @@ def parse_product(input: list[Token]) -> Result[Node]:
     return left_ass_expr(["*", "/"], parse_int)(input)
 
 
-def parse_plus(input: list[Token]) -> tuple[Node, list[Token]] | CompileError:
+def parse_plus(input: list[Token]) -> Result[Node]:
     return left_ass_expr(["+", "-"], parse_product)(input)
+
+def parse_expr(input: list[Token]) -> Result[Node]:
+    return parse_plus(input)
+
+def is_identifier(name: str) -> bool:
+    return name[0].isalpha() or name[0] == "_"
+
+def parse_identifier(input: list[Token]) -> Result[Node]:
+    if input == []:
+        return CompileError(None, "Unexpected end of file")
+    if is_identifier(input[0].value):
+        return Identifier(input[0].value), input[1:]
+    return CompileError(input[0].line, "Expected identifier")
+
+def parse_assignment(input: list[Token]) -> Result[Node]:
+    return map_parser(
+        separated_pair(parse_identifier, parse_token("="), parse_expr),
+        lambda x : BinOp(x[0], "=", x[1])
+    )(input)
+
+def parse_line(input: list[Token]) -> Result[Node]:
+    return alt(parse_assignment, parse_expr)(input)
 

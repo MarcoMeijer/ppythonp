@@ -1,8 +1,10 @@
 from typing import Any
 
+from context import Context
+
 
 class Node:
-    def execute(self) -> Any:
+    def execute(self, _: Context) -> Any:
         pass
 
 class Literal(Node):
@@ -12,8 +14,18 @@ class Literal(Node):
     def __str__(self) -> str:
        return str(self.value)
 
-    def execute(self) -> Any:
+    def execute(self, _: Context) -> Any:
         return self.value
+
+class Identifier(Node):
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+    def __str__(self) -> str:
+       return str(self.name)
+
+    def execute(self, context: Context) -> Any:
+        return context.get_variable(self.name)
 
 class BinOp(Node):
     def __init__(self, lhs: Node, op: str, rhs: Node) -> None:
@@ -24,13 +36,19 @@ class BinOp(Node):
     def __str__(self) -> str:
         return str(self.lhs) + self.op + str(self.rhs)
 
-    def execute(self) -> Any:
+    def execute(self, context: Context) -> Any:
         if self.op == "+":
-            return self.lhs.execute() + self.rhs.execute()
+            return self.lhs.execute(context) + self.rhs.execute(context)
         if self.op == "-":
-            return self.lhs.execute() - self.rhs.execute()
+            return self.lhs.execute(context) - self.rhs.execute(context)
         if self.op == "*":
-            return self.lhs.execute() * self.rhs.execute()
+            return self.lhs.execute(context) * self.rhs.execute(context)
         if self.op == "/":
-            return self.lhs.execute() / self.rhs.execute()
+            return self.lhs.execute(context) / self.rhs.execute(context)
+        if self.op == "=":
+            if isinstance(self.lhs, Identifier):
+                context.set_variable(self.lhs.name, self.rhs.execute(context))
+            else:
+                print("RUNTIME ERROR: Trying to assign to a non variable")
+                exit(-1)
 
