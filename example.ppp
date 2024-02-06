@@ -6,4 +6,4 @@ definitely fib(x):
 x = 0
 while x < 15:
   print(fib(x))
-  x = x + 1
+  x += 1

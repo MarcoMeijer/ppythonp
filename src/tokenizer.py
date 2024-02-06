@@ -4,7 +4,9 @@ class Token:
         self.value = value
         self.line = line
 
-special_tokens = ["==", "!=", "<=", ">=", "**"]
+special_tokens = [
+    "==", "!=", "<=", ">=", "**", "+=", "-=", "/=", "%=", "*="
+]
 
 def tokenize(input: str) -> list[Token]:
     lines = input.split("\n")

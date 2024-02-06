@@ -240,6 +240,22 @@ def parse_assignment(input: list[Token]) -> Result[Node]:
         lambda x : Assign(x[0], x[1])
     )(input)
 
+def parse_assignment_operator(input: list[Token]) -> Result[Node]:
+    return map_parser(
+        parse_tuple(
+            parse_identifier,
+            alt(
+                parse_token("+="),
+                parse_token("-="),
+                parse_token("/="),
+                parse_token("*="),
+                parse_token("%="),
+            ),
+            parse_expr,
+        ),
+        lambda x : Assign(x[0], BinOp(x[0], x[1][0], x[2]))
+    )(input)
+
 def parse_if(spaces: int) -> Parser[Node]:
     def parser(input: list[Token]):
         return map_parser(
@@ -289,7 +305,7 @@ def empty_line(input: list[Token]) -> Result[str]:
 def parse_line(spaces: int) -> Parser[Node]:
     def parser(input: list[Token]):
         p = alt(
-            terminated(alt(parse_assignment, parse_return, parse_expr), parse_token("\n")),
+            terminated(alt(parse_assignment, parse_assignment_operator, parse_return, parse_expr), parse_token("\n")),
             parse_if(spaces), parse_while(spaces), parse_definitely(spaces),
         )
         if spaces == 0:
