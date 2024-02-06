@@ -4,7 +4,7 @@ from context import Context
 from parser import parse_code_block
 from tokenizer import tokenize
 
-parser = argparse.ArgumentParser("pythonpp")
+parser = argparse.ArgumentParser("ppythonp")
 parser.add_argument("filename")
 args = parser.parse_args()
 
