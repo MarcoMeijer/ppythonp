@@ -1,5 +1,5 @@
 from compileError import CompileError
-from node import Assign, BinOp, CodeBlock, FunctionCall, FunctionDefinition, Identifier, IfStatement, Node, Literal, Return, WhileLoop
+from node import Assign, BinOp, CodeBlock, FunctionCall, FunctionDefinition, Identifier, IfStatement, NewList, Node, Literal, Return, WhileLoop
 from typing import Callable, List
 from tokenizer import Token
 
@@ -195,6 +195,16 @@ def parse_string(input: list[Token]) -> Result[Node]:
         return Literal(input[0].value[1:-1]), input[1:]
     return CompileError(input[0].line, "Expected string")
 
+def parse_list(input: list[Token]) -> Result[Node]:
+    return map_parser(
+        delimited(
+            parse_token("["),
+            separated_list_0(parse_expr, parse_token(",")),
+            parse_token("]"),
+        ),
+        lambda x : NewList(x)
+    )(input)
+
 def parse_false(input: List[Token]) -> Result[Node]:
     return map_parser(parse_token("FaLsE"), lambda _ : Literal(False))(input)
 
@@ -217,7 +227,15 @@ def parse_function_call(input: List[Token]) -> Result[Node]:
     )(input)
 
 def parse_value(input: List[Token]) -> Result[Node]:
-    return alt(parse_true, parse_false, parse_string, parse_function_call, parse_identifier, parse_int)(input)
+    return alt(
+        parse_true,
+        parse_false,
+        parse_string,
+        parse_function_call,
+        parse_identifier,
+        parse_int,
+        parse_list
+    )(input)
 
 def parse_product(input: list[Token]) -> Result[Node]:
     return left_ass_expr(["*", "/", "%"], parse_value)(input)

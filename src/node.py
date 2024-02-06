@@ -168,3 +168,16 @@ class Return(Node):
     def execute(self, context: Context) -> Any:
         context.return_value = self.expr.execute(context)
         context.returning = True
+
+class NewList(Node):
+    def __init__(self, values: list[Node]) -> None:
+        self.values = values
+
+    def __str__(self) -> str:
+        return "[" + ", ".join(list(map(str, self.values))) + "]"
+
+    def execute(self, context: Context) -> Any:
+        result = []
+        for value in self.values:
+            result.append(value.execute(context))
+        return result

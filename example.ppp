@@ -3,7 +3,9 @@ definitely fib(x):
     return x
   return fib(x - 1) + fib(x - 2)
 
+a = []
 x = 0
-while x < 15:
-  print(fib(x))
+while x <= 10:
+  a += [x]
   x += 1
+print(a)
