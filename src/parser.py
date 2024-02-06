@@ -3,8 +3,8 @@ from node import Assign, BinOp, CodeBlock, FunctionCall, FunctionDefinition, Ide
 from typing import Callable, List
 from tokenizer import Token
 
-type Result[T] = tuple[T, List[Token]] | CompileError
-type Parser[T] = Callable[[List[Token]], Result[T]]
+type Result[T] = tuple[T, list[Token]] | CompileError
+type Parser[T] = Callable[[list[Token]], Result[T]]
 
 def satisfy(f: Callable[[Token], bool]) -> Parser[Token]:
     def parser(input: list[Token]) -> Result[Token]:
@@ -276,8 +276,14 @@ def parse_definitely(spaces: int) -> Parser[Node]:
 
 def parse_return(input: list[Token]) -> Result[Node]:
     return map_parser(
-        preceded(parse_token("return"), parse_expr),
-        lambda x : Return(x)
+            preceded(parse_token("return"), parse_expr),
+            lambda x : Return(x)
+            )(input)
+
+def empty_line(input: list[Token]) -> Result[str]:
+    return alt(
+        parse_token("\n"),
+        preceded(satisfy(lambda x : x.value[0] == " "), parse_token("\n"))
     )(input)
 
 def parse_line(spaces: int) -> Parser[Node]:
@@ -294,7 +300,7 @@ def parse_line(spaces: int) -> Parser[Node]:
 def parse_code_block(spaces: int) -> Parser[CodeBlock]:
     def parser(input: list[Token]):
         return map_parser(
-            many_0(parse_line(spaces)),
+            many_0(preceded(many_0(empty_line), parse_line(spaces))),
             lambda x : CodeBlock(x, spaces)
         )(input)
     return parser
