@@ -7,5 +7,5 @@ a = []
 x = 0
 while x <= 10:
   a += [x]
-  x += 1
+  +x+
 print(a)
