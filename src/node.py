@@ -55,8 +55,20 @@ class BinOp(Node):
             if type(lhs) == str or type(rhs) == str:
                 return str(lhs) == str(rhs)
             return self.lhs.execute(context) == self.rhs.execute(context)
+        if self.op == "===":
+            return self.lhs.execute(context) == self.rhs.execute(context)
+        if self.op == "====":
+            return self.lhs.execute(context) is self.rhs.execute(context)
         if self.op == "!=":
+            lhs = self.lhs.execute(context)
+            rhs = self.rhs.execute(context)
+            if type(lhs) == str or type(rhs) == str:
+                return str(lhs) != str(rhs)
             return self.lhs.execute(context) != self.rhs.execute(context)
+        if self.op == "!==":
+            return self.lhs.execute(context) != self.rhs.execute(context)
+        if self.op == "!===":
+            return self.lhs.execute(context) is not self.rhs.execute(context)
         if self.op == "<":
             return self.lhs.execute(context) < self.rhs.execute(context)
         if self.op == ">":

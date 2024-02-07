@@ -244,7 +244,7 @@ def parse_plus(input: list[Token]) -> Result[Node]:
     return left_ass_expr(["+", "-"], parse_product)(input)
 
 def parse_comparison(input: list[Token]) -> Result[Node]:
-    return left_ass_expr(["==", "!=", "<", ">", "<=", ">="], parse_plus)(input)
+    return left_ass_expr(["==", "===", "====", "!=", "!==", "!===", "<", ">", "<=", ">="], parse_plus)(input)
 
 def parse_not(input: list[Token]) -> Result[Node]:
     return alt(

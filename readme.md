@@ -1,7 +1,8 @@
 ## +python+
 
 +python+ is an improved version of python.
-Just like Kotlin is an improvement of Java,
+Just like c++ is an improvement of c,
+Kotlin is an improvement of Java,
 Typescript is an improvement of Javascript,
 and php is an improvement of html.
 
@@ -72,7 +73,7 @@ Thats why in +python+ we removed that abreviation:
 
 ```py
 definitely f(x):
-    return x + 1
+ return x + 1
 
 print(f(10)) # prints 11
 ```
@@ -88,12 +89,12 @@ Here is an example to print the numbers from 0 to 10 using the reverse operator
 
 ```py
 if reverse:
-  reverse = false
+ reverse = false
 if reverse == false:
-  print(i)
-  +i+
+ print(i)
+ +i+
 if i < 10:
-  reverse = true
+ reverse = true
 ```
 
 And here is an example to print 3 times the numbers from 0 to 10 without any nesting.
@@ -101,21 +102,21 @@ And here is an example to print 3 times the numbers from 0 to 10 without any nes
 ```py
 i = 0
 if reverse:
-  reverse = false
+ reverse = false
 j_loop = true
 j = 0
 if j_loop and reverse:
-  reverse = false
+ reverse = false
 if j_loop and reverse == false:
-  print(j)
-  +j+
+ print(j)
+ +j+
 if j_loop and j < 10:
-  reverse = true
+ reverse = true
 j_loop = false
 if reverse == false:
-  +i+
+ +i+
 if i < 3:
-  reverse = true
+ reverse = true
 ```
 
 As you can see this is much better then nested for loops.
@@ -125,6 +126,17 @@ As you can see this is much better then nested for loops.
 As a fulltime javascript developer I strongly agree with this statement.
 It is way better if you have to explicitely tell the language that you want to compare if the types are also equal.
 So in +python+ types are automatically converted, unless explicitely told not to.
+So the == operator does type coercion, while the === operator works the same as the normal python == operator.
+If you want to test if two objects are pointing to the same memory address use the ==== operator.
+
+```py
+x = 1
+y = "1"
+if x == y: # this is true
+ print("x == y")
+if x === y: # this is not true
+ print("x === y")
+```
 
 # "Errors should never pass silently. Unless explicitly silenced."
 
