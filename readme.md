@@ -6,6 +6,8 @@ Kotlin is an improvement of Java,
 Typescript is an improvement of Javascript,
 and php is an improvement of html.
 
+## The Zen of Python
+
 The language tries to improve python based on "The Zen of Python".
 
 ```
@@ -32,7 +34,7 @@ Namespaces are one honking great idea -- let's do more of those!
 
 Lets go over how +python+ improves on some of these:
 
-## "There should be one-- and preferably only one --obvious way to do it."
+### "There should be one-- and preferably only one --obvious way to do it."
 
 The number one requested feature for python is the ++ and -- operator.
 The reason that they never added it is obviously because of this rule.
@@ -48,7 +50,7 @@ print(i) # prints 1
 
 This is also where +python+ got its name from.
 
-## "Beatiful is better than ugly."
+### "Beatiful is better than ugly."
 
 Is there anything more beatifull then the golden ratio?
 Thats why in +python+ the indentation increases based on the fibonacci sequence:
@@ -80,7 +82,7 @@ print(f(10)) # prints 11
 
 This will make the code more readible to people not familiar with +python+.
 
-## "Flat is better than nested."
+### "Flat is better than nested."
 
 Everyone knows the pain of having multiple nested for loops.
 Thats why +python+ adds an alternative to loops that doesn't require nesting: The reverse variable.
@@ -121,7 +123,7 @@ if i < 3:
 
 As you can see this is much better then nested for loops.
 
-## "Explicit is better than implicit."
+### "Explicit is better than implicit."
 
 As a fulltime javascript developer I strongly agree with this statement.
 It is way better if you have to explicitely tell the language that you want to compare if the types are also equal.
@@ -148,10 +150,33 @@ if a ==== b: # this is true
  print("a ==== b")
 ```
 
-## "Errors should never pass silently. Unless explicitly silenced."
+For addition it will convert both of the variables to a string, unless told not to do that.
+If you want to get an error when adding an int to a string, use the ++ operator.
+
+```py
+print(1 + "2") # prints 12
+print("1" ++ "2") # prints 12
+print(1 ++ "2") # crashes the program
+```
+
+### "Errors should never pass silently. Unless explicitly silenced."
 
 Any time an error is raised it will play a sound.
 This will make sure the programmer is aware of the error.
 This also applies to compile errors.
 The only way to stop the sound is to type stop in the console.
 
+
+## Features
+
+- integers
+- strings
+- lists
+- printing
+- if statements
+- while loops
+- functions
+- recursion
+- comparisons
+- binary logic operators
+- reversing code direction
