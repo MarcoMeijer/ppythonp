@@ -12,7 +12,9 @@ class Literal(Node):
         self.value = value
 
     def __str__(self) -> str:
-       return str(self.value)
+        if type(self.value) == str:
+            return "\"" + self.value + "\""
+        return str(self.value)
 
     def execute(self, _: Context) -> Any:
         return self.value
@@ -48,6 +50,10 @@ class BinOp(Node):
         if self.op == "/":
             return self.lhs.execute(context) / self.rhs.execute(context)
         if self.op == "==":
+            lhs = self.lhs.execute(context)
+            rhs = self.rhs.execute(context)
+            if type(lhs) == str or type(rhs) == str:
+                return str(lhs) == str(rhs)
             return self.lhs.execute(context) == self.rhs.execute(context)
         if self.op == "!=":
             return self.lhs.execute(context) != self.rhs.execute(context)
