@@ -6,6 +6,18 @@ from tokenizer import Token
 type Result[T] = tuple[T, list[Token]] | CompileError
 type Parser[T] = Callable[[list[Token]], Result[T]]
 
+def next_spaces(x: int):
+    if x == 0:
+        return 1
+    a = 1
+    b = 1
+    while True:
+        c = a + b
+        a = b
+        b = c
+        if a == x:
+            return b
+
 def satisfy(f: Callable[[Token], bool]) -> Parser[Token]:
     def parser(input: list[Token]) -> Result[Token]:
         if input == []:
@@ -306,7 +318,7 @@ def parse_if(spaces: int) -> Parser[Node]:
         return map_parser(
             pair(
                 delimited(parse_token("if"), parse_expr, parse_token(":")),
-                preceded(parse_token("\n"), parse_code_block(spaces + 2))
+                preceded(parse_token("\n"), parse_code_block(next_spaces(spaces)))
             ),
             lambda x : IfStatement(x[0], x[1])
         )(input)
@@ -317,7 +329,7 @@ def parse_while(spaces: int) -> Parser[Node]:
         return map_parser(
             pair(
                 delimited(parse_token("while"), parse_expr, parse_token(":")),
-                preceded(parse_token("\n"), parse_code_block(spaces + 2))
+                preceded(parse_token("\n"), parse_code_block(next_spaces(spaces)))
             ),
             lambda x : WhileLoop(x[0], x[1])
         )(input)
@@ -329,7 +341,7 @@ def parse_definitely(spaces: int) -> Parser[Node]:
             parse_tuple(
                 preceded(parse_token("definitely"), parse_identifier),
                 terminated(delimited(parse_token("("), separated_list_0(parse_identifier, parse_token(",")), parse_token(")")), parse_token(":")),
-                preceded(parse_token("\n"), parse_code_block(spaces + 2))
+                preceded(parse_token("\n"), parse_code_block(next_spaces(spaces)))
             ),
             lambda x : FunctionDefinition(x[0].name, list(map(lambda y : y.name, x[1])), x[2])
         )(input)

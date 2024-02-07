@@ -150,7 +150,7 @@ if a ==== b: # this is true
  print("a ==== b")
 ```
 
-For addition it will convert both of the variables to a string, unless told not to do that.
+For addition it will convert both of the variables to a string, unless explicitely told not to do that.
 If you want to get an error when adding an int to a string, use the ++ operator.
 
 ```py
