@@ -1,5 +1,5 @@
 from compileError import CompileError
-from node import Assign, BinOp, CodeBlock, FunctionCall, FunctionDefinition, Identifier, IfStatement, NewList, Node, Literal, Return, ReverseOp, WhileLoop
+from node import Assign, BinOp, CodeBlock, FunctionCall, FunctionDefinition, Identifier, IfStatement, NewList, Node, Literal, NotOp, Return, WhileLoop
 from typing import Callable, List
 from tokenizer import Token
 
@@ -246,8 +246,23 @@ def parse_plus(input: list[Token]) -> Result[Node]:
 def parse_comparison(input: list[Token]) -> Result[Node]:
     return left_ass_expr(["==", "!=", "<", ">", "<=", ">="], parse_plus)(input)
 
+def parse_not(input: list[Token]) -> Result[Node]:
+    return alt(
+        map_parser(
+            preceded(parse_token("not"), parse_not),
+            lambda x : NotOp(x)
+        ),
+        parse_comparison,
+    )(input)
+
+def parse_and(input: list[Token]) -> Result[Node]:
+    return left_ass_expr(["and"], parse_not)(input)
+
+def parse_or(input: list[Token]) -> Result[Node]:
+    return left_ass_expr(["or"], parse_and)(input)
+
 def parse_expr(input: list[Token]) -> Result[Node]:
-    return parse_comparison(input)
+    return parse_or(input)
 
 def is_identifier(name: str) -> bool:
     return name[0].isalpha() or name[0] == "_"

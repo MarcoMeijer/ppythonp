@@ -59,6 +59,10 @@ class BinOp(Node):
             return self.lhs.execute(context) <= self.rhs.execute(context)
         if self.op == ">=":
             return self.lhs.execute(context) >= self.rhs.execute(context)
+        if self.op == "and":
+            return self.lhs.execute(context) and self.rhs.execute(context)
+        if self.op == "or":
+            return self.lhs.execute(context) or self.rhs.execute(context)
 
 class Assign(Node):
     def __init__(self, lhs: Node, rhs: Node) -> None:
@@ -187,3 +191,13 @@ class NewList(Node):
         for value in self.values:
             result.append(value.execute(context))
         return result
+
+class NotOp(Node):
+    def __init__(self, expr: Node) -> None:
+        self.expr = expr
+
+    def __str__(self) -> str:
+        return "not " + str(self.expr)
+
+    def execute(self, context: Context) -> Any:
+        return not self.expr.execute(context)
