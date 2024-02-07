@@ -2,6 +2,23 @@ from typing import Any
 
 from context import Context
 
+def my_range(*args):
+    if len(args) <= 2:
+        for x in range(*args):
+            yield x
+        return
+    i = args[0]
+    end = args[1]
+    di = list(args[2:])
+    while True:
+        if di[0] > 0 and i >= end:
+            break
+        if di[0] < 0 and i <= end:
+            break
+        yield i
+        i += di[0]
+        for j in range(len(di)-1,0,-1):
+            di[j - 1] += di[j]
 
 class Node:
     def execute(self, _: Context) -> Any:
@@ -119,10 +136,13 @@ class FunctionCall(Node):
         return result + ")"
 
     def execute(self, context: Context) -> Any:
+        arguments = list(map(lambda x : x.execute(context), self.arguments))
         if self.function == "print":
-            print(self.arguments[0].execute(context))
+            print(*arguments)
+        elif self.function == "range":
+            return my_range(*arguments)
         else:
-            return context.call_function(self.function, list(map(lambda x : x.execute(context), self.arguments)))
+            return context.call_function(self.function, arguments)
 
 class CodeBlock(Node):
     def __init__(self, lines: list[Node], indent: int) -> None:

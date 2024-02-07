@@ -167,6 +167,36 @@ This also applies to compile errors.
 The only way to stop the sound is to type stop in the console.
 
 
+## Python api improvements
+
+### range
+
+Normally in python you can pass at most 3 arguments to the range function.
+But in +python+ you can pass an infinite amount.
+Normally if you have three arguments, the third argument specifies the change after each iteration.
+
+```py
+# prints the numbers 0, 2, 4, 6, 8
+for i in range(0,10,2):
+ print(i)
+```
+
+But if you pass a fourth argument, it will increment the third argument each iteration:
+```py
+# prints the numbers 0, 2, 5, 9
+for i in range(0,10,2,1):
+ print(i)
+```
+
+This pattern continues with all the other arguments:
+```py
+# print the numbers 0, 2, 22, 89, 257, 613, 1285, 2450, 4342, 7260
+for i in range(0,10000,2,6,3,1,6):
+ print(i)
+```
+
+You are probably wondering why this is useful.
+
 ## Full feature list
 
 - integers
