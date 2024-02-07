@@ -40,6 +40,12 @@ class BinOp(Node):
 
     def execute(self, context: Context) -> Any:
         if self.op == "+":
+            lhs = self.lhs.execute(context)
+            rhs = self.rhs.execute(context)
+            if type(lhs) == str or type(rhs) == str:
+                return str(lhs) + str(rhs)
+            return lhs + rhs
+        if self.op == "++":
             return self.lhs.execute(context) + self.rhs.execute(context)
         if self.op == "-":
             return self.lhs.execute(context) - self.rhs.execute(context)
@@ -54,7 +60,7 @@ class BinOp(Node):
             rhs = self.rhs.execute(context)
             if type(lhs) == str or type(rhs) == str:
                 return str(lhs) == str(rhs)
-            return self.lhs.execute(context) == self.rhs.execute(context)
+            return lhs == rhs
         if self.op == "===":
             return self.lhs.execute(context) == self.rhs.execute(context)
         if self.op == "====":
@@ -64,7 +70,7 @@ class BinOp(Node):
             rhs = self.rhs.execute(context)
             if type(lhs) == str or type(rhs) == str:
                 return str(lhs) != str(rhs)
-            return self.lhs.execute(context) != self.rhs.execute(context)
+            return lhs != rhs
         if self.op == "!==":
             return self.lhs.execute(context) != self.rhs.execute(context)
         if self.op == "!===":

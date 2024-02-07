@@ -241,7 +241,7 @@ def parse_product(input: list[Token]) -> Result[Node]:
     return left_ass_expr(["*", "/", "%"], parse_value)(input)
 
 def parse_plus(input: list[Token]) -> Result[Node]:
-    return left_ass_expr(["+", "-"], parse_product)(input)
+    return left_ass_expr(["+", "++", "-"], parse_product)(input)
 
 def parse_comparison(input: list[Token]) -> Result[Node]:
     return left_ass_expr(["==", "===", "====", "!=", "!==", "!===", "<", ">", "<=", ">="], parse_plus)(input)
