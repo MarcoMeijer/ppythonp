@@ -1,4 +1,4 @@
-## +python+
+# +python+
 
 +python+ is an improved version of python.
 Just like c++ is an improvement of c,
@@ -32,7 +32,7 @@ Namespaces are one honking great idea -- let's do more of those!
 
 Lets go over how +python+ improves on some of these:
 
-# "There should be one-- and preferably only one --obvious way to do it."
+## "There should be one-- and preferably only one --obvious way to do it."
 
 The number one requested feature for python is the ++ and -- operator.
 The reason that they never added it is obviously because of this rule.
@@ -48,7 +48,7 @@ print(i) # prints 1
 
 This is also where +python+ got its name from.
 
-# "Beatiful is better than ugly."
+## "Beatiful is better than ugly."
 
 Is there anything more beatifull then the golden ratio?
 Thats why in +python+ the indentation increases based on the fibonacci sequence:
@@ -80,7 +80,7 @@ print(f(10)) # prints 11
 
 This will make the code more readible to people not familiar with +python+.
 
-# "Flat is better than nested."
+## "Flat is better than nested."
 
 Everyone knows the pain of having multiple nested for loops.
 Thats why +python+ adds an alternative to loops that doesn't require nesting: The reverse variable.
@@ -121,7 +121,7 @@ if i < 3:
 
 As you can see this is much better then nested for loops.
 
-# "Explicit is better than implicit."
+## "Explicit is better than implicit."
 
 As a fulltime javascript developer I strongly agree with this statement.
 It is way better if you have to explicitely tell the language that you want to compare if the types are also equal.
@@ -136,9 +136,19 @@ if x == y: # this is true
  print("x == y")
 if x === y: # this is not true
  print("x === y")
+
+a = [1, 2]
+b = [1, 2]
+if a === b: # this is true
+ print("a === b")
+if a ==== b: # this is not true
+ print("a === b")
+a = b
+if a ==== b: # this is true
+ print("a ==== b")
 ```
 
-# "Errors should never pass silently. Unless explicitly silenced."
+## "Errors should never pass silently. Unless explicitly silenced."
 
 Any time an error is raised it will play a sound.
 This will make sure the programmer is aware of the error.
