@@ -1,5 +1,5 @@
 from compileError import CompileError
-from node import Assign, BinOp, CodeBlock, FunctionCall, FunctionDefinition, Identifier, IfStatement, NewList, Node, Literal, NotOp, Return, WhileLoop
+from node import Assign, BinOp, CodeBlock, ForLoop, FunctionCall, FunctionDefinition, Identifier, IfStatement, NewList, Node, Literal, NotOp, Return, WhileLoop
 from typing import Callable, List
 from tokenizer import Token
 
@@ -335,6 +335,18 @@ def parse_while(spaces: int) -> Parser[Node]:
         )(input)
     return parser
 
+def parse_for(spaces: int) -> Parser[Node]:
+    def parser(input: list[Token]):
+        return map_parser(
+            parse_tuple(
+                preceded(parse_token("for"), parse_identifier),
+                delimited(parse_token("in"), parse_expr, parse_token(":")),
+                preceded(parse_token("\n"), parse_code_block(next_spaces(spaces))),
+            ),
+            lambda x : ForLoop(x[0], x[1], x[2])
+        )(input)
+    return parser
+
 def parse_definitely(spaces: int) -> Parser[Node]:
     def parser(input: list[Token]):
         return map_parser(
@@ -373,7 +385,10 @@ def parse_line(spaces: int) -> Parser[Node]:
                 ),
                 parse_token("\n")
             ),
-            parse_if(spaces), parse_while(spaces), parse_definitely(spaces),
+            parse_if(spaces),
+            parse_while(spaces),
+            parse_for(spaces),
+            parse_definitely(spaces),
         )
         if spaces == 0:
             return p(input)

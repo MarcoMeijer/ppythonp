@@ -168,6 +168,20 @@ class WhileLoop(Node):
         while self.condition.execute(context):
             self.while_true.execute(context)
 
+class ForLoop(Node):
+    def __init__(self, variable_name: Identifier, values: Node, for_each: CodeBlock) -> None:
+        self.variable_name = variable_name
+        self.values = values
+        self.for_each = for_each
+
+    def __str__(self) -> str:
+        return "for " + str(self.variable_name) + " in " + str(self.values) + ":\n" + str(self.for_each)
+
+    def execute(self, context: Context) -> Any:
+        for x in self.values.execute(context):
+            context.set_variable(self.variable_name.name, x)
+            self.for_each.execute(context)
+
 class FunctionDefinition(Node):
     def __init__(self, name: str, arguments: list[str], code: CodeBlock) -> None:
         self.name = name

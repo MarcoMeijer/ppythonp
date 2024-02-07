@@ -167,7 +167,7 @@ This also applies to compile errors.
 The only way to stop the sound is to type stop in the console.
 
 
-## Features
+## Full feature list
 
 - integers
 - strings
@@ -175,8 +175,10 @@ The only way to stop the sound is to type stop in the console.
 - printing
 - if statements
 - while loops
+- for loops
 - functions
 - recursion
 - comparisons
 - binary logic operators
+- increment operator
 - reversing code direction
