@@ -17,7 +17,7 @@ def my_range(*args):
             break
         yield i
         i += di[0]
-        for j in range(len(di)-1,0,-1):
+        for j in range(1,len(di)):
             di[j - 1] += di[j]
 
 class Node:

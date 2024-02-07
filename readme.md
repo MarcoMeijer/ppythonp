@@ -190,7 +190,7 @@ for i in range(0,10,2,1):
 
 This pattern continues with all the other arguments:
 ```py
-# print the numbers 0, 2, 22, 89, 257, 613, 1285, 2450, 4342, 7260
+# print the numbers 0, 2, 10, 27, 57, 113, 225, 448, 870, 1620, 2876, 4873, 7911
 for i in range(0,10000,2,6,3,1,6):
  print(i)
 ```
