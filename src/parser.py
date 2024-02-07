@@ -1,5 +1,5 @@
 from compileError import CompileError
-from node import Assign, BinOp, CodeBlock, FunctionCall, FunctionDefinition, Identifier, IfStatement, NewList, Node, Literal, Return, WhileLoop
+from node import Assign, BinOp, CodeBlock, FunctionCall, FunctionDefinition, Identifier, IfStatement, NewList, Node, Literal, Return, ReverseOp, WhileLoop
 from typing import Callable, List
 from tokenizer import Token
 
@@ -206,10 +206,10 @@ def parse_list(input: list[Token]) -> Result[Node]:
     )(input)
 
 def parse_false(input: List[Token]) -> Result[Node]:
-    return map_parser(parse_token("FaLsE"), lambda _ : Literal(False))(input)
+    return map_parser(parse_token("false"), lambda _ : Literal(False))(input)
 
 def parse_true(input: List[Token]) -> Result[Node]:
-    return map_parser(parse_token("tRuE"), lambda _ : Literal(True))(input)
+    return map_parser(parse_token("true"), lambda _ : Literal(True))(input)
 
 def parse_identifier(input: list[Token]) -> Result[Identifier]:
     if input == []:
@@ -322,9 +322,9 @@ def parse_definitely(spaces: int) -> Parser[Node]:
 
 def parse_return(input: list[Token]) -> Result[Node]:
     return map_parser(
-            preceded(parse_token("return"), parse_expr),
-            lambda x : Return(x)
-            )(input)
+        preceded(parse_token("return"), parse_expr),
+        lambda x : Return(x)
+    )(input)
 
 def empty_line(input: list[Token]) -> Result[str]:
     return alt(

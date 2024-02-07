@@ -82,18 +82,18 @@ This will make the code more readible to people not familiar with +python+.
 5. Flat is better than nested.
 
 Everyone knows the pain of having multiple nested for loops.
-Thats why +python+ adds an alternative to loops that doesn't require nesting: The reverse operator.
-It allows you to reverse the direction of the code.
+Thats why +python+ adds an alternative to loops that doesn't require nesting: The reverse variable.
+This is a builtin variable that allows you to reverse the direction of the code.
 Here is an example to print the numbers from 0 to 10 using the reverse operator
 
 ```py
-i = 0
-if i != 0:
-    reverse
-print(i)
-+i+
+if reverse:
+  reverse = false
+if reverse == false:
+  print(i)
+  +i+
 if i < 10:
-    reverse
+  reverse = true
 ```
 
 And here is an example to find all pairs of numbers between 0 and 10 whose sum is even without any nesting:

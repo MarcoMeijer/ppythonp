@@ -1,11 +1,20 @@
-definitely fib(x):
-  if x <= 1:
-    return x
-  return fib(x - 1) + fib(x - 2)
+i = 0
+if reverse:
+  reverse = false
 
-a = []
-x = 0
-while x <= 10:
-  a += [x]
-  +x+
-print(a)
+j_loop = true
+j = 0
+if j_loop:
+  if reverse:
+    reverse = false
+  if reverse == false:
+    print(j)
+    +j+
+  if j < 10:
+    reverse = true
+j_loop = false
+
+if reverse == false:
+  +i+
+if i < 3:
+  reverse = true

@@ -3,7 +3,7 @@ from typing import Any
 
 class Context:
     def __init__(self) -> None:
-        self.variables = [{}]
+        self.variables = [{"reverse":False}]
         self.functions = {}
         self.return_value = None
         self.returning = False

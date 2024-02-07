@@ -105,8 +105,14 @@ class CodeBlock(Node):
         return "\n".join(map(lambda x : " " * self.indent + str(x), self.lines))
 
     def execute(self, context: Context) -> Any:
-        for line in self.lines:
+        i = 0
+        while i >= 0 and i < len(self.lines):
+            line = self.lines[i]
             line.execute(context)
+            if context.get_variable("reverse"):
+                i -= 1
+            else:
+                i += 1
             if context.returning:
                 return
 
