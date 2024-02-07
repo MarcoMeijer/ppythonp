@@ -67,7 +67,7 @@ if x < 10:
              print(i)
 ```
 
-7. Readability counts.
+### Readability counts.
 
 Many new users of python are confused by the "def" keyword,
 because they don't know what the abreviation means.
