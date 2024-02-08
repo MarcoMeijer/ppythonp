@@ -21,7 +21,8 @@ if __name__ == '__main__':
             base_name, extension = filename.split(".")
             if extension != "ppp":
                 continue
-            def run_this_test(self):
-                run_test(self, f"{dirpath}{base_name}")
+            test_name = f"{dirpath}{base_name}"
+            def run_this_test(self, test_name=test_name):
+                run_test(self, test_name)
             setattr(TestStringMethods, f"test_{base_name}", run_this_test)
     unittest.main()
