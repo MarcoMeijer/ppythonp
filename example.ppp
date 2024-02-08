@@ -1,24 +1,8 @@
-rule = 90
-width = 65
-height = 32
-row = [0] * width
-next_row = [0] * width
-row[32] = 1
-for i in range(height):
- line = ""
- for j in range(width):
-  if row[j]:
-   line += "#"
-  if not row[j]:
-   line += " "
- print(line)
- next_row[0] = row[0]
- next_row[width-1] = row[width-1]
- for j in range(1,width-1):
-  y = row[j - 1] * 4 + row[j] * 2 + row[j + 1]
-  if rule & 1 << y == 1 << y:
-   next_row[j] = 1
-  else:
-   next_row[j] = 0
- row = next_row
- next_row = [0] * width
+definitely ackermann(n, m):
+ if n == 0:
+  return m + 1
+ if m == 0:
+  return ackermann(n - 1, 1)
+ return ackermann(n - 1, ackermann(n, m - 1))
+
+print(ackermann(3,5))

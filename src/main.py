@@ -3,6 +3,9 @@ from compileError import CompileError
 from context import Context
 from parser import parse_code_block
 from tokenizer import tokenize
+import sys
+
+sys.setrecursionlimit(1_000_000)
 
 parser = argparse.ArgumentParser("ppythonp")
 parser.add_argument("filename")
