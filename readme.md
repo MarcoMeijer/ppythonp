@@ -209,6 +209,7 @@ For example try running `./ppythonp example.ppp`.
 
 ## Full feature list
 
+- comments
 - integers
 - strings
 - lists
