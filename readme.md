@@ -204,12 +204,15 @@ You are probably wondering why this is useful.
 - strings
 - lists
 - printing
+- list indexing
 - if statements
+- if else statements
 - while loops
 - for loops
 - functions
 - recursion
 - comparisons
+- bitwise operators
 - binary logic operators
 - increment operator
 - reversing code direction
