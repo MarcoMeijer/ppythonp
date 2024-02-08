@@ -201,6 +201,12 @@ for i in range(0,10000,2,6,3,1,6):
 
 You are probably wondering why this is useful.
 
+## How to run
+
+You first need to have python 3.12 installed on your system.
+Then you can execute code by running the ppythonp script like this: `./ppythonp [filename]`.
+For example try running `./ppythonp example.ppp`.
+
 ## Full feature list
 
 - integers
