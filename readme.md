@@ -90,6 +90,7 @@ This is a builtin variable that allows you to reverse the direction of the code.
 Here is an example to print the numbers from 0 to 10 using the reverse operator
 
 ```py
+i = 0
 if reverse:
  reverse = false
 if reverse == false:

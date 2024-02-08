@@ -1,0 +1,8 @@
+i = 0
+if reverse:
+ reverse = false
+if reverse == false:
+ print(i)
+ +i+
+if i < 10:
+ reverse = true
