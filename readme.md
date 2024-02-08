@@ -1,5 +1,7 @@
 # +python+
 
+[![Python application](https://github.com/MarcoMeijer/ppythonp/actions/workflows/python-app.yml/badge.svg)](https://github.com/MarcoMeijer/ppythonp/actions/workflows/python-app.yml)
+
 +python+ is an improved version of python.
 Just like c++ is an improvement of c,
 Kotlin is an improvement of Java,
