@@ -1,5 +1,6 @@
 import unittest
 import subprocess
+from os import walk
 
 def run_test(test_case: unittest.TestCase, file_name: str):
     source_file = f"{file_name}.ppp"
@@ -11,8 +12,16 @@ def run_test(test_case: unittest.TestCase, file_name: str):
     test_case.assertEqual(str(result.stdout, encoding='utf-8'), expected_output)
 
 class TestStringMethods(unittest.TestCase):
-    def test_hello_world(self):
-        run_test(self, "tests/hello_world")
+    pass
 
 if __name__ == '__main__':
+    f = []
+    for (dirpath, dirnames, filenames) in walk("tests/"):
+        for filename in filenames:
+            base_name, extension = filename.split(".")
+            if extension != "ppp":
+                continue
+            def run_this_test(self):
+                run_test(self, f"{dirpath}{base_name}")
+            setattr(TestStringMethods, f"test_{base_name}", run_this_test)
     unittest.main()
