@@ -214,6 +214,24 @@ class IfStatement(Node):
         if self.condition.execute(context):
             self.if_true.execute(context)
 
+class IfElseStatement(Node):
+    def __init__(self, condition: Node, if_true: CodeBlock, if_false: CodeBlock) -> None:
+        self.condition = condition
+        self.if_true = if_true
+        self.if_false = if_false
+
+    def __str__(self) -> str:
+        return "if " + str(self.condition) + ":\n" + str(self.if_true) + "else:\n" + str(self.if_false)
+
+    def execute(self, context: Context, lvalue: bool = False) -> Any:
+        if lvalue:
+            print(f"ERROR: cannot assign to an if statement")
+            exit(1)
+        if self.condition.execute(context):
+            self.if_true.execute(context)
+        else:
+            self.if_false.execute(context)
+
 class WhileLoop(Node):
     def __init__(self, condition: Node, while_true: CodeBlock) -> None:
         self.condition = condition
