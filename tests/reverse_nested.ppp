@@ -1,0 +1,17 @@
+i = 0
+if reverse:
+ reverse = false
+j_loop = true
+j = 0
+if j_loop and reverse:
+ reverse = false
+if j_loop and reverse == false:
+ print(j)
+ +j+
+if j_loop and j < 10:
+ reverse = true
+j_loop = false
+if reverse == false:
+ +i+
+if i < 3:
+ reverse = true
