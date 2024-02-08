@@ -1,0 +1,16 @@
+x = 1
+y = "1"
+if x == y:
+ print("1. x == y")
+if x === y:
+ print("2. x === y")
+
+a = [1, 2]
+b = [1, 2]
+if a === b:
+ print("3. a === b")
+if a ==== b:
+ print("4. a === b")
+a = b
+if a ==== b:
+ print("5. a ==== b")
