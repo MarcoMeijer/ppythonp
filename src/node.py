@@ -86,6 +86,16 @@ class BinOp(Node):
             return self.lhs.execute(context) % self.rhs.execute(context)
         if self.op == "/":
             return self.lhs.execute(context) / self.rhs.execute(context)
+        if self.op == "<<":
+            return self.lhs.execute(context) << self.rhs.execute(context)
+        if self.op == ">>":
+            return self.lhs.execute(context) >> self.rhs.execute(context)
+        if self.op == "&":
+            return self.lhs.execute(context) & self.rhs.execute(context)
+        if self.op == "^":
+            return self.lhs.execute(context) ^ self.rhs.execute(context)
+        if self.op == "|":
+            return self.lhs.execute(context) | self.rhs.execute(context)
         if self.op == "==":
             lhs = self.lhs.execute(context)
             rhs = self.rhs.execute(context)

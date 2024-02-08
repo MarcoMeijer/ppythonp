@@ -267,8 +267,20 @@ def parse_product(input: list[Token]) -> Result[Node]:
 def parse_plus(input: list[Token]) -> Result[Node]:
     return left_ass_expr(["+", "++", "-"], parse_product)(input)
 
+def parse_shifting(input: list[Token]) -> Result[Node]:
+    return left_ass_expr(["<<", ">>"], parse_plus)(input)
+
+def parse_bitwise_and(input: list[Token]) -> Result[Node]:
+    return left_ass_expr(["&"], parse_shifting)(input)
+
+def parse_bitwise_xor(input: list[Token]) -> Result[Node]:
+    return left_ass_expr(["^"], parse_bitwise_and)(input)
+
+def parse_bitwise_or(input: list[Token]) -> Result[Node]:
+    return left_ass_expr(["|"], parse_bitwise_xor)(input)
+
 def parse_comparison(input: list[Token]) -> Result[Node]:
-    return left_ass_expr(["==", "===", "====", "!=", "!==", "!===", "<", ">", "<=", ">="], parse_plus)(input)
+    return left_ass_expr(["==", "===", "====", "!=", "!==", "!===", "<", ">", "<=", ">="], parse_bitwise_or)(input)
 
 def parse_not(input: list[Token]) -> Result[Node]:
     return alt(
