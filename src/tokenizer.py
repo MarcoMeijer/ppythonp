@@ -60,6 +60,9 @@ def tokenize(input: str) -> list[Token]:
                         chars.append(c)
                         continue
 
+            if c == "#":
+                break
+
             if chars != []:
                 result.append(Token("".join(chars), line))
                 chars = []
