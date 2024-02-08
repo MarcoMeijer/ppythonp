@@ -1,5 +1,5 @@
 from compileError import CompileError
-from node import Assign, BinOp, CodeBlock, ForLoop, FunctionCall, FunctionDefinition, Identifier, IfStatement, NewList, Node, Literal, NotOp, Return, WhileLoop
+from node import Assign, BinOp, CodeBlock, ForLoop, FunctionCall, FunctionDefinition, Identifier, IfStatement, Index, NewList, Node, Literal, NotOp, Return, WhileLoop
 from typing import Callable, List
 from tokenizer import Token
 
@@ -230,24 +230,36 @@ def parse_identifier(input: list[Token]) -> Result[Identifier]:
         return Identifier(input[0].value), input[1:]
     return CompileError(input[0].line, "Expected identifier")
 
-def parse_function_call(input: List[Token]) -> Result[Node]:
-    return map_parser(
-        pair(parse_identifier,
-             delimited(parse_token("("), separated_list_0(parse_expr, parse_token(",")), parse_token(")"))
-        ),
-        lambda x : FunctionCall(x[0].name, x[1])
-    )(input)
-
 def parse_value(input: List[Token]) -> Result[Node]:
-    return alt(
+    result = alt(
         parse_true,
         parse_false,
         parse_string,
-        parse_function_call,
         parse_identifier,
         parse_int,
         parse_list
     )(input)
+
+    if isinstance(result, CompileError):
+        return result
+    node, input = result
+
+    while True:
+        result = alt(
+            map_parser(
+                delimited(parse_token("["), parse_expr, parse_token("]")),
+                lambda x : Index(node, x)
+            ),
+            map_parser(
+                delimited(parse_token("("), separated_list_0(parse_expr, parse_token(",")), parse_token(")")),
+                lambda x : FunctionCall(node, x)
+            )
+        )(input)
+
+        if isinstance(result, CompileError):
+            return node, input
+
+        node, input = result
 
 def parse_product(input: list[Token]) -> Result[Node]:
     return left_ass_expr(["*", "/", "%"], parse_value)(input)
@@ -281,14 +293,14 @@ def is_identifier(name: str) -> bool:
 
 def parse_assignment(input: list[Token]) -> Result[Node]:
     return map_parser(
-        separated_pair(parse_identifier, parse_token("="), parse_expr),
+        separated_pair(parse_expr, parse_token("="), parse_expr),
         lambda x : Assign(x[0], x[1])
     )(input)
 
 def parse_assignment_operator(input: list[Token]) -> Result[Node]:
     return map_parser(
         parse_tuple(
-            parse_identifier,
+            parse_expr,
             alt(
                 parse_token("+="),
                 parse_token("-="),

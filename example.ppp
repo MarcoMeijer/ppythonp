@@ -1,2 +1,34 @@
-for i in range(0,10000,2,6,3,1,8):
- print(i)
+width = 100
+height = 100
+row = [false] * width
+next_row = [false] * width
+row[width - 1] = true
+for i in range(height):
+ line = ""
+ for j in range(width):
+  if row[j]:
+   line += "#"
+  if not row[j]:
+   line += " "
+ print(line)
+ next_row[0] = row[0]
+ next_row[width-1] = row[width-1]
+ for j in range(1,width-1):
+  if row[j - 1] and row[j] and row[j + 1]:
+   next_row[j] = false
+  if row[j - 1] and row[j] and not row[j + 1]:
+   next_row[j] = true
+  if row[j - 1] and not row[j] and row[j + 1]:
+   next_row[j] = true
+  if row[j - 1] and not row[j] and not row[j + 1]:
+   next_row[j] = false
+  if not row[j - 1] and row[j] and row[j + 1]:
+   next_row[j] = true
+  if not row[j - 1] and row[j] and not row[j + 1]:
+   next_row[j] = true
+  if not row[j - 1] and not row[j] and row[j + 1]:
+   next_row[j] = true
+  if not row[j - 1] and not row[j] and not row[j + 1]:
+   next_row[j] = false
+ row = next_row
+ next_row = [false] * width

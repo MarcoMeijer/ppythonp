@@ -21,7 +21,7 @@ def my_range(*args):
             di[j - 1] += di[j]
 
 class Node:
-    def execute(self, _: Context) -> Any:
+    def execute(self, _: Context, _lvalue: bool = False) -> Any:
         pass
 
 class Literal(Node):
@@ -33,7 +33,10 @@ class Literal(Node):
             return "\"" + self.value + "\""
         return str(self.value)
 
-    def execute(self, _: Context) -> Any:
+    def execute(self, _: Context, lvalue: bool = False) -> Any:
+        if lvalue:
+            print("ERROR: literal can't be an lvalue")
+            exit(1)
         return self.value
 
 class Identifier(Node):
@@ -43,7 +46,15 @@ class Identifier(Node):
     def __str__(self) -> str:
        return str(self.name)
 
-    def execute(self, context: Context) -> Any:
+    def execute(self, context: Context, lvalue: bool = False) -> Any:
+        if lvalue:
+            node = self
+            class Prox:
+                def __getitem__(self, _):
+                    return context.get_variable(node.name)
+                def __setitem__(self, _, v):
+                    return context.set_variable(node.name, v)
+            return Prox()
         return context.get_variable(self.name)
 
 class BinOp(Node):
@@ -55,7 +66,10 @@ class BinOp(Node):
     def __str__(self) -> str:
         return str(self.lhs) + self.op + str(self.rhs)
 
-    def execute(self, context: Context) -> Any:
+    def execute(self, context: Context, lvalue: bool = False) -> Any:
+        if lvalue:
+            print(f"ERROR: operator {self.op} can't be an lvalue")
+            exit(1)
         if self.op == "+":
             lhs = self.lhs.execute(context)
             rhs = self.rhs.execute(context)
@@ -113,15 +127,15 @@ class Assign(Node):
     def __str__(self) -> str:
         return str(self.lhs) + "=" + str(self.rhs)
 
-    def execute(self, context: Context) -> Any:
-        if isinstance(self.lhs, Identifier):
-            context.set_variable(self.lhs.name, self.rhs.execute(context))
-        else:
-            print("RUNTIME ERROR: Trying to assign to a non variable")
-            exit(-1)
+    def execute(self, context: Context, lvalue: bool = False) -> Any:
+        if lvalue:
+            print(f"ERROR: assigment can't be an lvalue")
+            exit(1)
+        variable = self.lhs.execute(context, True)
+        variable[:] = self.rhs.execute(context)
 
 class FunctionCall(Node):
-    def __init__(self, function: str, arguments: list[Node]) -> None:
+    def __init__(self, function: Node, arguments: list[Node]) -> None:
         self.function = function
         self.arguments = arguments
 
@@ -135,14 +149,22 @@ class FunctionCall(Node):
             first = False
         return result + ")"
 
-    def execute(self, context: Context) -> Any:
+    def execute(self, context: Context, lvalue: bool = False) -> Any:
+        if lvalue:
+            print(f"ERROR: cannot assign the the result of a function call")
+            exit(1)
         arguments = list(map(lambda x : x.execute(context), self.arguments))
-        if self.function == "print":
-            print(*arguments)
-        elif self.function == "range":
-            return my_range(*arguments)
+        if not isinstance(self.function, Identifier):
+            print("Trying to call a non function")
+            exit(1)
         else:
-            return context.call_function(self.function, arguments)
+            name = self.function.name
+            if name == "print":
+                print(*arguments)
+            elif name == "range":
+                return my_range(*arguments)
+            else:
+                return context.call_function(name, arguments)
 
 class CodeBlock(Node):
     def __init__(self, lines: list[Node], indent: int) -> None:
@@ -152,7 +174,10 @@ class CodeBlock(Node):
     def __str__(self) -> str:
         return "\n".join(map(lambda x : " " * self.indent + str(x), self.lines))
 
-    def execute(self, context: Context) -> Any:
+    def execute(self, context: Context, lvalue: bool = False) -> Any:
+        if lvalue:
+            print(f"ERROR: cannot assign to a code block")
+            exit(1)
         i = 0
         while i >= 0 and i < len(self.lines):
             line = self.lines[i]
@@ -172,7 +197,10 @@ class IfStatement(Node):
     def __str__(self) -> str:
         return "if " + str(self.condition) + ":\n" + str(self.if_true)
 
-    def execute(self, context: Context) -> Any:
+    def execute(self, context: Context, lvalue: bool = False) -> Any:
+        if lvalue:
+            print(f"ERROR: cannot assign to an if statement")
+            exit(1)
         if self.condition.execute(context):
             self.if_true.execute(context)
 
@@ -184,7 +212,10 @@ class WhileLoop(Node):
     def __str__(self) -> str:
         return "while " + str(self.condition) + ":\n" + str(self.while_true)
 
-    def execute(self, context: Context) -> Any:
+    def execute(self, context: Context, lvalue: bool = False) -> Any:
+        if lvalue:
+            print(f"ERROR: cannot assign to a while loop")
+            exit(1)
         while self.condition.execute(context):
             self.while_true.execute(context)
 
@@ -197,7 +228,10 @@ class ForLoop(Node):
     def __str__(self) -> str:
         return "for " + str(self.variable_name) + " in " + str(self.values) + ":\n" + str(self.for_each)
 
-    def execute(self, context: Context) -> Any:
+    def execute(self, context: Context, lvalue: bool = False) -> Any:
+        if lvalue:
+            print(f"ERROR: cannot assign to a while loop")
+            exit(1)
         for x in self.values.execute(context):
             context.set_variable(self.variable_name.name, x)
             self.for_each.execute(context)
@@ -211,7 +245,10 @@ class FunctionDefinition(Node):
     def __str__(self) -> str:
         return "definitely " + str(self.name) + "(" + ", ".join(list(map(str, self.arguments))) + "):\n" + str(self.code)
 
-    def execute(self, context: Context) -> Any:
+    def execute(self, context: Context, lvalue: bool = False) -> Any:
+        if lvalue:
+            print(f"ERROR: cannot assign to a function")
+            exit(1)
         def f(*args):
             if len(args) != len(self.arguments):
                 print(f"Incorrect number of arguments passed to function {self.name}")
@@ -233,7 +270,10 @@ class Return(Node):
     def __str__(self) -> str:
         return "return " + str(self.expr)
 
-    def execute(self, context: Context) -> Any:
+    def execute(self, context: Context, lvalue: bool = False) -> Any:
+        if lvalue:
+            print(f"ERROR: cannot assign to an return statement")
+            exit(1)
         context.return_value = self.expr.execute(context)
         context.returning = True
 
@@ -244,7 +284,10 @@ class NewList(Node):
     def __str__(self) -> str:
         return "[" + ", ".join(list(map(str, self.values))) + "]"
 
-    def execute(self, context: Context) -> Any:
+    def execute(self, context: Context, lvalue: bool = False) -> Any:
+        if lvalue:
+            print(f"ERROR: cannot assign to a list literal")
+            exit(1)
         result = []
         for value in self.values:
             result.append(value.execute(context))
@@ -257,5 +300,28 @@ class NotOp(Node):
     def __str__(self) -> str:
         return "not " + str(self.expr)
 
-    def execute(self, context: Context) -> Any:
+    def execute(self, context: Context, lvalue: bool = False) -> Any:
+        if lvalue:
+            print(f"ERROR: cannot assign to a not operation")
+            exit(1)
         return not self.expr.execute(context)
+
+class Index(Node):
+    def __init__(self, value: Node, index: Node) -> None:
+        self.value = value
+        self.index = index
+
+    def __str__(self) -> str:
+        return str(self.value) + "[" + str(self.index) + "]"
+
+    def execute(self, context: Context, lvalue: bool = False) -> Any:
+        value = self.value.execute(context)
+        index = self.index.execute(context)
+        if lvalue:
+            class Prox:
+                def __getitem__(self, _):
+                    return value[index]
+                def __setitem__(self, _, v):
+                    value[index] = v
+            return Prox()
+        return value[index]
